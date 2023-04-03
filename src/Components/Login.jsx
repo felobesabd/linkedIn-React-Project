@@ -1,11 +1,21 @@
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 import logo from '../Images/login-logo.svg'
 import logoHero from '../Images/login-hero.svg'
 import google from '../Images/google.svg'
+import {signInAPI} from "../redux/actions/index.js";
 
-const Login = ()=> {
+
+const Login = (props)=> {
+
+  const navigate = useNavigate()
+  useEffect(()=> {
+    {props.user && navigate('/home')}
+  }, [props.user])
+
   return (
     <Container>
       <Nav>
@@ -23,7 +33,7 @@ const Login = ()=> {
           <img src={logoHero} alt=''/>
         </Hero>
         <Form>
-          <Google>
+          <Google onClick={() => props.signIn()}>
             <img src={google} alt=''/>
               Sign In With Google
           </Google>
@@ -162,4 +172,16 @@ const Google = styled.button`
   }
 `;
 
-export default Login;
+const mapStateToProps = (state)=> {
+  return {
+    user: state.userState.user,
+  }
+}
+
+const mapDispatchToProps = (dispatch)=> {
+  return {
+    signIn: ()=> dispatch(signInAPI()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
